@@ -6,10 +6,11 @@ import (
 	"io/ioutil"
 	"log"
 	"net/smtp"
+	"os"
 	"text/template"
 )
 
-type Tarkan struct {
+type Person struct {
 	Name  string
 	Email string
 }
@@ -19,17 +20,23 @@ type Credential struct {
 	Password string
 }
 
-var tarkans []Tarkan
+var personsFile string
+var templateFile string
+var persons []Person
 var credential Credential
 
 const subject = "Initiating project newsletter"
 
-func initTarkansAndCreds() {
-	jsonBytes, _ := ioutil.ReadFile("./secrets/tarkans.json")
-	json.Unmarshal(jsonBytes, &tarkans)
+func initPersonsAndCreds() {
+	jsonBytes, _ := ioutil.ReadFile(personsFile)
+	json.Unmarshal(jsonBytes, &persons)
 
 	jsonBytes, _ = ioutil.ReadFile("./secrets/credentials.json")
-	json.Unmarshal(jsonBytes, &credential)
+	err := json.Unmarshal(jsonBytes, &credential)
+
+	if err != nil {
+		log.Panic(err)
+	}
 }
 
 func send(email string, body string) {
@@ -53,23 +60,26 @@ func send(email string, body string) {
 }
 
 func main() {
-	initTarkansAndCreds()
-	txtFile, _ := ioutil.ReadFile("./template.txt")
+	personsFile = os.Args[1]
+	templateFile = os.Args[2]
+
+	initPersonsAndCreds()
+	txtFile, _ := ioutil.ReadFile(templateFile)
 
 	tmpl, err := template.New("test").Parse(string(txtFile))
 
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 
-	for _, tarkan := range tarkans {
+	for _, person := range persons {
 		var body bytes.Buffer
-		err = tmpl.Execute(&body, tarkan)
+		err = tmpl.Execute(&body, person)
 
-		send(tarkan.Email, body.String())
+		send(person.Email, body.String())
 	}
 
 	if err != nil {
-		panic(err)
+		log.Panic(err)
 	}
 }
