@@ -20,15 +20,15 @@ type Credential struct {
 	Password string
 }
 
-var personsFile string
+var peopleFile string
 var templateFile string
 var persons []Person
 var credential Credential
 
-const subject = "Initiating project newsletter"
+var subject string
 
 func initPersonsAndCreds() {
-	jsonBytes, _ := ioutil.ReadFile(personsFile)
+	jsonBytes, _ := ioutil.ReadFile(peopleFile)
 	json.Unmarshal(jsonBytes, &persons)
 
 	jsonBytes, _ = ioutil.ReadFile("./secrets/credentials.json")
@@ -60,8 +60,9 @@ func send(email string, body string) {
 }
 
 func main() {
-	personsFile = os.Args[1]
+	peopleFile = os.Args[1]
 	templateFile = os.Args[2]
+	subject = os.Args[3]
 
 	initPersonsAndCreds()
 	txtFile, _ := ioutil.ReadFile(templateFile)

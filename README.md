@@ -9,4 +9,4 @@ A simple text based template mailer using golang libs.
 
 ## Run
 
-    $ ./template-mailer {persons.json} {template.txt}
+    $ ./template-mailer {people.json} {templates/template.txt} "{subject}"
