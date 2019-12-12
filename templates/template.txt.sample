@@ -1,6 +1,6 @@
 Hi {{.Name}},
 
-{{if .IsRSVPed}}You have RSVPed to attend Go's 10th anniversary happening in 2 day. We are excited to have you!
+{{if .IsRSVPed}}You have RSVPed to attend Go's 10th anniversary happening in 2 days. We are excited to have you!
 
 In case you change your mind or something has come up please let us know...
 
