@@ -1,9 +1,25 @@
 Hi {{.Name}},
 
-Welcome to the matrix!
+{{if .IsRSVPed}}You have RSVPed to attend Go's 10th anniversary happening in 2 day. We are excited to have you!
+
+In case you change your mind or something has come up please let us know...
+
+We encourage you to share and post about the experience. Please use the hashtag: "#ChnGoTurns10 #GoTurns10" during the event. Tweet link: https://twitter.com/intent/tweet?hashtags=ChnGoTurns10%2C+GoTurns10&url=https%3A%2F%2Fwww.meetup.com%2FChennai-golang-Meetup%2Fevents%2F266846525%2F&text=I+am+attending+this+month%27s+Go+meetup+happening+%40+Qube+Cinemas
+{{else}}Thank you for attending one of our previous meetups. We would like to have you in the upcoming meetup as well.{{end}}
+
+This month's meetup is at Qube cinemas: https://goo.gl/maps/qHCsggE8X7xae1cA6. You can checkout the meetup page for more info: https://www.meetup.com/Chennai-golang-Meetup/events/266846525/.
+
+We have some goodies lined up and some treats along with the Talk and Parallel Workshop tracks.
+
+Find us on,
+
+Meetup: https://www.meetup.com/Chennai-golang-Meetup
+YouTube: https://www.youtube.com/channel/UC2VJY13gO3Q_UcxlLApFmcw
 
 Regards,
 
-Gaurav Agarwal (@algogrit),
+Gaurav Agarwal (@algogrit)
 Community Manager,
 Chennai Gophers
+
+P.S. Reply unsubscribe to this email, if you don't wish to receive more of such mails.

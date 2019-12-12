@@ -1,6 +1,7 @@
 [
   {
-  "Name": "G A",
-  "Email": "ga@example.com"
+    "Name": "G A",
+    "Email": "ga@example.com",
+    "IsRSVPed": true
   }
 ]

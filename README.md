@@ -10,3 +10,8 @@ A simple text based template mailer using golang libs.
 ## Run
 
     $ ./template-mailer {people.json} {templates/template.txt} "{subject}"
+
+
+## TODO
+
+- Use Hermes (go get -u github.com/matcornic/hermes/v2)
