@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-./template-mailer people.json templates/template.txt "Go turns 10 anniversary celebration"
+./template-mailer people.json templates/template.txt "See you tomorrow at Go's 10th Anniversary celebration"
