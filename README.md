@@ -1,17 +1,27 @@
-Template Mailer
----------------
+# Template Mailer
 
 A simple text based template mailer using golang libs.
 
 ## Build
 
-    $ go build
+```bash
+go build .
+```
+
+## Generate people.json
+
+```bash
+./generate-people-json.sh
+```
 
 ## Run
 
-    $ ./template-mailer {people.json} {templates/template.txt} "{subject}"
+```bash
+./template-mailer {people.json} {templates/template.txt} "{subject}"
+```
 
+or
 
-## TODO
-
-- Use Hermes (go get -u github.com/matcornic/hermes/v2)
+```bash
+./send-email.sh
+```

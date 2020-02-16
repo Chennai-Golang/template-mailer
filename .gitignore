@@ -3,3 +3,5 @@ templates/
 template-mailer
 people.json
 past-mails/
+.env
+mails
