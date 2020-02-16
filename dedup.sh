@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-echo $1 $2
-
 _FILE_PATH=$1
 _EMAIL_TO_REMOVE=$2
 

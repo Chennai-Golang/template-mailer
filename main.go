@@ -96,9 +96,11 @@ func (m Mailer) Send() []error {
 
 		plainTextContent := body.String()
 
-		log.Info(plainTextContent)
+		log.Debug(plainTextContent)
 
-		message := mail.NewSingleEmail(from, subject, to, plainTextContent, "")
+		message := mail.NewSingleEmail(from, subject, to, "", "")
+
+		message.Content = []*mail.Content{mail.NewContent("text/plain", plainTextContent)}
 
 		response, err := m.Client.Send(message)
 
@@ -113,6 +115,8 @@ func (m Mailer) Send() []error {
 }
 
 func main() {
+	log.SetLevel(log.DebugLevel)
+
 	errs := mailer.Send()
 
 	if len(errs) != 0 {
