@@ -4,68 +4,62 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
-	"log"
-	"net/smtp"
 	"os"
 	"text/template"
+
+	"github.com/sendgrid/sendgrid-go"
+	"github.com/sendgrid/sendgrid-go/helpers/mail"
+	log "github.com/sirupsen/logrus"
 )
 
+// Person represents a meetup invitee
 type Person struct {
 	Name     string
 	Email    string
 	IsRSVPed bool
 }
 
+// Credential represents Mail credentials
 type Credential struct {
 	Email    string
 	Password string
 }
 
-var peopleFile string
-var templateFile string
-var persons []Person
-var credential Credential
+// Mailer wraps sendgrid and templating
+type Mailer struct {
+	*sendgrid.Client
+	*template.Template
+	Subject string
+	Credential
+	People []Person
+}
 
-var subject string
+var mailer Mailer
 
-func initPersonsAndCreds() {
-	jsonBytes, _ := ioutil.ReadFile(peopleFile)
-	json.Unmarshal(jsonBytes, &persons)
+func init() {
+	peopleFile := os.Args[1]
+	templateFile := os.Args[2]
+	subject := os.Args[3]
 
-	jsonBytes, _ = ioutil.ReadFile("./secrets/credentials.json")
+	client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))
+
+	var credential Credential
+
+	jsonBytes, _ := ioutil.ReadFile("./secrets/credentials.json")
 	err := json.Unmarshal(jsonBytes, &credential)
 
 	if err != nil {
 		log.Panic(err)
 	}
-}
 
-func send(email string, body string) {
-	from := credential.Email
-	pass := credential.Password
-	to := email
-
-	msg := "From: " + from + "\n" +
-		"To: " + to + "\n" +
-		"Subject: " + subject + "\n\n" +
-		body
-
-	err := smtp.SendMail("smtp.gmail.com:587",
-		smtp.PlainAuth("", from, pass, "smtp.gmail.com"),
-		from, []string{to}, []byte(msg))
+	var people []Person
+	jsonBytes, _ = ioutil.ReadFile(peopleFile)
+	err = json.Unmarshal(jsonBytes, &people)
 
 	if err != nil {
-		log.Panic("smtp error: %s", err)
-		return
+		log.Panic(err)
 	}
-}
 
-func main() {
-	peopleFile = os.Args[1]
-	templateFile = os.Args[2]
-	subject = os.Args[3]
-
-	initPersonsAndCreds()
 	txtFile, _ := ioutil.ReadFile(templateFile)
 
 	tmpl, err := template.New("test").Parse(string(txtFile))
@@ -74,14 +68,54 @@ func main() {
 		log.Panic(err)
 	}
 
-	for _, person := range persons {
-		var body bytes.Buffer
-		err = tmpl.Execute(&body, person)
+	mailer = Mailer{
+		Client:     client,
+		Template:   tmpl,
+		Credential: credential,
+		Subject:    subject,
+		People:     people,
+	}
+}
 
-		send(person.Email, body.String())
+// Send dispatches the mail to people
+func (m Mailer) Send() []error {
+	var errs []error
+
+	for _, person := range m.People {
+		from := mail.NewEmail("Chennai Gophers", m.Credential.Email)
+		subject := m.Subject
+		to := mail.NewEmail(person.Name, person.Email)
+
+		var body bytes.Buffer
+		err := m.Template.Execute(&body, person)
+
+		if err != nil {
+			errs = append(errs, err)
+			continue
+		}
+
+		plainTextContent := body.String()
+
+		log.Info(plainTextContent)
+
+		message := mail.NewSingleEmail(from, subject, to, plainTextContent, "")
+
+		response, err := m.Client.Send(message)
+
+		log.Debug(response.StatusCode, response.Body, response.Headers)
+
+		if err != nil {
+			errs = append(errs, err)
+		}
 	}
 
-	if err != nil {
-		log.Panic(err)
+	return errs
+}
+
+func main() {
+	errs := mailer.Send()
+
+	if len(errs) != 0 {
+		log.Error(errs)
 	}
 }
