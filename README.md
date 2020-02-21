@@ -25,3 +25,7 @@ or
 ```bash
 ./send-email.sh
 ```
+
+## TODO
+
+* Switch to HTML based mail now that we have SendGrid
