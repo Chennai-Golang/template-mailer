@@ -29,3 +29,4 @@ or
 ## TODO
 
 * Switch to HTML based mail now that we have SendGrid
+* Have a buffered mailer implementation - buffer of 100 mails per day!
