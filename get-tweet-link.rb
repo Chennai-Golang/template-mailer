@@ -10,9 +10,9 @@ def add_params(url, params = {})
 end
 
 tweet_link = add_params("https://twitter.com/intent/tweet", {
-  hashtags: "ChennaiGoMeetup, ChnGoFeb2020",
-  url: "https://www.meetup.com/Chennai-golang-Meetup/events/268418851/",
-  text: "I am attending this month's Go meetup happening @ IIT Madras Research Park"
+  url: "https://www.meetup.com/Chennai-golang-Meetup/events/272907625/",
+  hashtags: "ChennaiGoMeetup, ChnGoSept2020",
+  text: "I am attending this month's Remote Go meetup"
 })
 
 puts tweet_link

@@ -4,12 +4,12 @@ Hi {{.Name}},
 
 In case you change your mind or something has come up please let us know...
 
-We encourage you to share and post about the experience. Please use the hashtag: "#ChennaiGoMeetup #ChnGoFeb2020" during the event. Tweet link: https://twitter.com/intent/tweet?hashtags=ChennaiGoMeetup%2C+ChnGoFeb2020&url=https%3A%2F%2Fwww.meetup.com%2FChennai-golang-Meetup%2Fevents%2F268418851%2F&text=I+am+attending+this+month%27s+Go+meetup+happening+%40+IIT+Madras+Research+Park
+We encourage you to share and post about the experience. Please use the hashtag: "#ChennaiGoMeetup #ChnGoSept2020" during the event. Tweet link: https://twitter.com/intent/tweet?url=https%3A%2F%2Fwww.meetup.com%2FChennai-golang-Meetup%2Fevents%2F272907625%2F&hashtags=ChennaiGoMeetup%2C+ChnGoSept2020&text=I+am+attending+this+month%27s+Remote+Go+meetup
 {{else}}Thank you for attending one of our previous meetups. We would like to have you in the upcoming meetup as well.{{end}}
 
-This month's meetup is at IIT Madras Research Park: https://goo.gl/maps/DVR26vHGhxV15Sst7. You can checkout the meetup page for more info: https://www.meetup.com/Chennai-golang-Meetup/events/268418851/.
+We have a remote meetup this month owing to the COVID'19 situation. You can checkout the meetup page for more info: https://www.meetup.com/Chennai-golang-Meetup/events/272907625/.
 
-We have some goodies lined up along with some interesting talks. Hang around after for networking.
+We have some interesting talks on security & structuring Go applications. Hang around after for networking.
 
 Find us on,
 
@@ -22,4 +22,4 @@ Gaurav Agarwal (@algogrit)
 Community Manager,
 Chennai Gophers
 
-P.S. Reply unsubscribe to this email, if you don't wish to receive more of such mails.
+P.S. Reply "unsubscribe" to this email, if you don't wish to receive more of such mails.
