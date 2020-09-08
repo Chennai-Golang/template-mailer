@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"text/template"
@@ -36,6 +37,56 @@ type Mailer struct {
 
 var mailer Mailer
 
+func getCredential() (*Credential, error) {
+	var credential Credential
+
+	jsonBytes, err := ioutil.ReadFile("./secrets/credentials.json")
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to read credentials file: %v", err)
+	}
+
+	err = json.Unmarshal(jsonBytes, &credential)
+	if err != nil {
+		return nil, fmt.Errorf("malformed credentials: %v", err)
+	}
+
+	return &credential, nil
+}
+
+func getPeople(peopleFile string) ([]Person, error) {
+	var people []Person
+	jsonBytes, err := ioutil.ReadFile(peopleFile)
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to read people list: %v", err)
+	}
+
+	err = json.Unmarshal(jsonBytes, &people)
+
+	if err != nil {
+		return nil, fmt.Errorf("malformed people list: %v", err)
+	}
+
+	return people, nil
+}
+
+func getTemplate(templateFile string) (*template.Template, error) {
+	txtFile, err := ioutil.ReadFile(templateFile)
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to read template file: %v", err)
+	}
+
+	tmpl, err := template.New("test").Parse(string(txtFile))
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to parse template file: %v", err)
+	}
+
+	return tmpl, nil
+}
+
 func init() {
 	peopleFile := os.Args[1]
 	templateFile := os.Args[2]
@@ -43,27 +94,17 @@ func init() {
 
 	client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))
 
-	var credential Credential
-
-	jsonBytes, _ := ioutil.ReadFile("./secrets/credentials.json")
-	err := json.Unmarshal(jsonBytes, &credential)
-
+	credential, err := getCredential()
 	if err != nil {
 		log.Panic(err)
 	}
 
-	var people []Person
-	jsonBytes, _ = ioutil.ReadFile(peopleFile)
-	err = json.Unmarshal(jsonBytes, &people)
-
+	people, err := getPeople(peopleFile)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	txtFile, _ := ioutil.ReadFile(templateFile)
-
-	tmpl, err := template.New("test").Parse(string(txtFile))
-
+	tmpl, err := getTemplate(templateFile)
 	if err != nil {
 		log.Panic(err)
 	}
@@ -71,7 +112,7 @@ func init() {
 	mailer = Mailer{
 		Client:     client,
 		Template:   tmpl,
-		Credential: credential,
+		Credential: *credential,
 		Subject:    subject,
 		People:     people,
 	}
@@ -81,7 +122,7 @@ func init() {
 func (m Mailer) Send() []error {
 	var errs []error
 
-	for _, person := range m.People {
+	for index, person := range m.People {
 		from := mail.NewEmail("Chennai Gophers", m.Credential.Email)
 		subject := m.Subject
 		to := mail.NewEmail(person.Name, person.Email)
@@ -104,9 +145,15 @@ func (m Mailer) Send() []error {
 
 		response, err := m.Client.Send(message)
 
-		log.Debug(response.StatusCode, response.Body, response.Headers)
+		log.Infof("\tStatus Code: %d", response.StatusCode)
+		log.Infof("\tBody: %s", response.Body)
 
-		if err != nil {
+		if !(response.StatusCode < 400) {
+			resErr := fmt.Errorf("unable to send email index: %d ; to: %v ; body: %s ; error: %v", index, person, response.Body, err)
+			log.Error(resErr)
+			errs = append(errs, resErr)
+		} else if err != nil {
+			log.Error("unable to send email:", err)
 			errs = append(errs, err)
 		}
 	}
@@ -120,6 +167,6 @@ func main() {
 	errs := mailer.Send()
 
 	if len(errs) != 0 {
-		log.Error(errs)
+		log.Error("unable to send all emails!")
 	}
 }
